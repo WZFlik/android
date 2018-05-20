@@ -1,5 +1,6 @@
 package comh.example.menu;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,8 +14,9 @@ import android.widget.Toast;
 import javax.xml.transform.stream.StreamResult;
 
 public class MainActivity extends AppCompatActivity {
-    //之定义了数字和加号,等号和各个数字按钮
-    private Button bt_0,bt_1,bt_2,bt_3,bt_4,bt_5,bt_6,bt_7,bt_8,bt_9,bt_plus,bt_equel,bt_ac;
+    //声明了数字和加号,等号和各个数字按钮
+    private Button bt_0,bt_1,bt_2,bt_3,bt_4,bt_5,bt_6,bt_7,bt_8,bt_9,bt_plus,bt_equel,bt_ac
+    ,bt_sub,bt_mul,bt_div,bt_dot,bt_per;
     private EditText et_result;//输入框
     private final String TAG="MYIFO";//输出日志
     @Override
@@ -36,7 +38,13 @@ public class MainActivity extends AppCompatActivity {
         bt_equel=(Button)findViewById(R.id.bt5_3);
         et_result=(EditText) findViewById(R.id.text);
         bt_ac=(Button)findViewById(R.id.bt1_1);
-//阻册监听器
+        bt_sub=(Button)findViewById(R.id.bt3_4);
+        bt_mul=(Button)findViewById(R.id.bt2_4);
+        bt_div=(Button)findViewById(R.id.bt1_4);
+        bt_dot=(Button)findViewById(R.id.bt5_2);
+        bt_per=(Button)findViewById(R.id.bt1_3);
+
+//注册监听器
         MyonClickLis myonclicklis=new MyonClickLis();
         bt_0.setOnClickListener(myonclicklis);
         bt_1.setOnClickListener(myonclicklis);
@@ -51,9 +59,13 @@ public class MainActivity extends AppCompatActivity {
         bt_plus.setOnClickListener(myonclicklis);
         bt_equel.setOnClickListener(myonclicklis);
         bt_ac.setOnClickListener(myonclicklis);
+        bt_sub.setOnClickListener(myonclicklis);
+        bt_mul.setOnClickListener(myonclicklis);
+        bt_div.setOnClickListener(myonclicklis);
+        bt_dot.setOnClickListener(myonclicklis);
+        bt_per.setOnClickListener(myonclicklis);
 
     }
-
 
     //自定义一个监听器
     public class MyonClickLis implements View.OnClickListener{
@@ -62,42 +74,42 @@ public class MainActivity extends AppCompatActivity {
         private String strOp2="";//第二输入的操作数
         private  String operation="";//当前使用的运算符
         private String  strResult="0";//当前的运行结果
-        private String lastInputType="0";//最后输入的运算符，0=数字，1=运算符；
+        private int lastInputType=0;//最后输入的运算符，0=数字，1=运算符；
 
         /**
          * 输入数字时的操作方法
          */
         private void NumInput(int num){
             Log.i(TAG, "输入了: num");
-            if(strResult.equals("0")){   //如果输入数字是文本框内是0，直接主
+            if(strResult.equals("0")){   //如果输入数字是文本框内是0，直接为0
                 strResult=""+num;
             }
-            else if(lastInputType=="0"){//如果上次输入的是数字直接追加到其后
+            else if(lastInputType==0){//如果上次输入的是数字直接追加到其后
                 strResult=strResult+num;
             }
-            else if(lastInputType=="1"){//如果上次输入的是运算符，输入框显示为当前数字
+            else if(lastInputType==1){//如果上次输入的是运算符，输入框显示为当前数字
                 strResult=""+num;
             }
             et_result.setText(strResult);//更新输入框显示内容
-            lastInputType="0";//将最后输入符号变为数字
+            lastInputType=0;//将最后输入符号变为数字
         }
 
         /**
          * 处理运算符运算 + - * /
+         *
          * @param
          */
         private void operationInout(String opt){
-            //如果上一个输入的是运算符,代替上一个运算符
-            if(lastInputType=="1"){
+            //如果上一个输入的是运算符,代替上一个运算符如++
+            if(lastInputType==1){
                 operation=opt;
-                lastInputType="1";
-                strOp1=strResult;
+                lastInputType=1;
                 return;
             }
             //如果上一个operation为空则，设置为当前opt
             if(operation.isEmpty()){
                 operation=opt;
-                lastInputType="1";
+               // lastInputType="1";
                 strOp1=strResult;
             }else if(!strOp1.isEmpty()){ //比如输入了1+2+ +是当前输入的，1在输入第一个+时付给StrOp1；
              strOp2= strResult;//设置第二个操作数的值
@@ -111,12 +123,47 @@ public class MainActivity extends AppCompatActivity {
                 strOp2="";//设置第二操作数格式化
                     operation=opt;
                 }
+                //处理-号运算
+                if(operation.equals("-")){
+                double opt1=Double.parseDouble(strOp1);
+                double opt2=Double.parseDouble(strOp2);
+                strResult= String.valueOf(opt1-opt2);
+                et_result.setText(strResult);
+                strOp1=strResult;//设置当前值为第一个操作数
+                strOp2="";//设置第二操作数格式化
+                operation=opt;
+                }
+                //处理*号
+                if(operation.equals("*")){
+                double opt1=Double.parseDouble(strOp1);
+                double opt2=Double.parseDouble(strOp2);
+                strResult= String.valueOf(opt1*opt2);
+                et_result.setText(strResult);
+                strOp1=strResult;//设置当前值为第一个操作数
+                strOp2="";//设置第二操作数格式化
+                operation=opt;
+                }
+                //处理/号
+                if(operation.equals("/")){
+                    double opt1=Double.parseDouble(strOp1);
+                double opt2=Double.parseDouble(strOp2);
+                strResult= String.valueOf(opt1/opt2);
+                et_result.setText(strResult);
+                strOp1=strResult;//设置当前值为第一个操作数
+                strOp2="";//设置第二操作数格式化
+                operation=opt;
+                }
             }
-             //待添加算法逻辑（-、*、/）
+
+           lastInputType=1;
         }
+
+
+
 
         /**
          * 处理%运算符
+         *
          * @param
          */
         private void percentInput(){
@@ -127,18 +174,22 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 处理AC键
+         *
          * @param
          */
         private void ACInput(){
         strResult="0";
-        lastInputType="0";
-        strOp2=strOp1="0";
+        lastInputType=0;
+        operation="";
+        strOp2="";
+        strOp1="0";
         et_result.setText(strResult);
 
         }
 
         /**
          * 处理点号  .
+         *
          * @param v
          */
       private void dotInput(){
@@ -150,34 +201,83 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 处理等号运算符
+         *
          * @param
          */
       private void equalInput( ){
          if(operation.isEmpty()){//没有运算符输入时直接返回
-             return;
+            return;
          }
-         if(lastInputType=="1"&&!strOp1.isEmpty()){//最后输入的是运算符，第一个操作数不为空时，如1+=
+         if(lastInputType==1&&!strOp1.isEmpty()){//最后输入的是运算符，第一个操作数不为空时，如1+=
            if(operation.equals("+")){
                double op1= Double.parseDouble(strOp1);
-               double op2=Double.parseDouble(strResult);
+               double op2=Double.parseDouble(strOp1);
                strResult=String.valueOf(op1+op2);
                et_result.setText(strResult);
            }
-
+            //减号
+         if(operation.equals("-")){
+               double op1= Double.parseDouble(strOp1);
+               double op2=Double.parseDouble(strOp1);
+               strResult=String.valueOf(op1-op2);
+               et_result.setText(strResult);
 
          }
-         else if(!strOp1.isEmpty()&&lastInputType=="0"){//处理正常1+2=，=是当前输入
+         if(operation.equals("*")){
+               double op1= Double.parseDouble(strOp1);
+               double op2=Double.parseDouble(strOp1);
+               strResult=String.valueOf(op1*op2);
+               et_result.setText(strResult);
+
+         }
+         if(operation.equals("/")){
+               double op1= Double.parseDouble(strOp1);
+               double op2=Double.parseDouble(strOp1);
+               strResult=String.valueOf(op1/op2);
+               et_result.setText(strResult);
+
+         }
+         }
+         else if(!strOp1.isEmpty()&&lastInputType==0){//处理正常1+2=，=是当前输入
              strOp2=strResult;
              if (operation.equals("+")){
                  double op1= Double.parseDouble(strOp1);
-                 double op2=Double.parseDouble(strResult);
+                 double op2=Double.parseDouble(strOp2);
                  strResult=String.valueOf(op1+op2);
-                 et_result.setText(strResult);//出结果并清零
+                 et_result.setText(strResult);//出结果并格式化
                  strOp2=strOp1="";
                  operation="";
              }
+             //减法
+             if (operation.equals("-")){
+                 double op1= Double.parseDouble(strOp1);
+                 double op2=Double.parseDouble(strOp2);
+                 strResult=String.valueOf(op1-op2);
+                 et_result.setText(strResult);//出结果并格式化
+                 strOp2=strOp1="";
+                 operation="";
+             }
+             if (operation.equals("*")){
+                 double op1= Double.parseDouble(strOp1);
+                 double op2=Double.parseDouble(strOp2);
+                 strResult=String.valueOf(op1*op2);
+                 et_result.setText(strResult);//出结果并格式化
+                 strOp2=strOp1="";
+                 operation="";
+             }
+             if (operation.equals("/")){
+                 double op1= Double.parseDouble(strOp1);
+                 double op2=Double.parseDouble(strOp2);
+                 strResult=String.valueOf(op1/op2);
+                 et_result.setText(strResult);//出结果并格式化
+                 strOp2=strOp1="";
+                 operation="";
+             }
+
          }
       }
+
+
 
 
         //重写方法
@@ -217,12 +317,35 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.bt4_4:
                     operationInout("+");
                     break;
+
+                    //减法
+                    case R.id.bt3_4:
+                        operationInout("-");
+                        break;
+                    case R.id.bt2_4:
+                         operationInout("*");
+                          break;
+                    case R.id.bt1_4:
+                           operationInout("/");
+                            break;
+                      //点号
+                      case R.id.bt5_2:
+                        dotInput();
+                        break;
+                        //百分号
+                      case R.id.bt1_3:
+                       percentInput();
+                            break;
+
+
+
                 case R.id.bt5_3://BUTTON equel;
                     equalInput();
                     break;
                 case R.id.bt1_1:
                     ACInput();
                     break;
+
                 default:
                     break;
 
@@ -231,17 +354,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
-    }
 
 
 
-
-
-
-
-
-
-
+}
 
 
 //overrid  eonCreateOptionsMenu  function
@@ -257,15 +373,16 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.Item_f:
-                Toast.makeText(this,"you clicked copy!",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"menu",Toast.LENGTH_LONG).show();
                 break;
             case R.id.Item_p:
-                Toast.makeText(this,"you clicked paste!",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"item",Toast.LENGTH_LONG).show();
                 break;
             case R.id.Item_j:
-                Toast.makeText(this,"you clicked cut !",Toast.LENGTH_LONG).show();
+                Toast.makeText(this,"  inR",Toast.LENGTH_LONG).show();
                 break;
-                default:;
+            default:
+                break;
         }
         return true;
     }

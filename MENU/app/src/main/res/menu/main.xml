@@ -4,11 +4,11 @@
 
     <item
 android:id="@+id/Item_j"
-android:title="剪切" />
+android:title="w" />
 <item
 android:id="@+id/Item_p"
-android:title="粘贴" />
+android:title="z" />
 <item
 android:id="@+id/Item_f"
-android:title="复制 " />
+android:title="f" />
     </menu>
