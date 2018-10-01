@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import javax.xml.transform.stream.StreamResult;
+/*test string for git */
 
 public class MainActivity extends AppCompatActivity {
     //之定义了数字和加号,等号和各个数字按钮
